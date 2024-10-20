@@ -1,157 +1,103 @@
-/*
-A double-ended queue (deque) is a linear list in which additions and deletions may be made at either end. Obtain a data
-representation mapping a deque into a one-dimensional array. Write C++ program to simulate deque with functions to add 
-and delete elements from either end of the deque. 
-*/
-
-#include<iostream>
-#include<stdio.h>
-#define MAX 10
+#include <iostream>
 using namespace std;
+#define size 10
 
-struct que
+class stackexp
 {
-    int arr[MAX];
-    int front,rear;
+    int top;
+    char stk[size];
+public:
+    stackexp()
+    {
+     top = -1;
+    }
+    void push(char);
+    char pop();
+    bool isfull();
+    bool isempty();
+    char peek();
 };
 
-void init(struct que *q)
+void stackexp::push(char x)
 {
-    q->front=-1;
-    q->rear=-1;
-}
-
-void print(struct que q)
-{
-    int i;
-    i=q.front;
-    while(i!=q.rear)
-    {
-        cout<<"\t"<<q.arr[i];
-        i=(i+1)%MAX;
-    }
-    cout<<"\t"<<q.arr[q.rear];
-}
-
-int isempty(struct que q)
-{
-    return q.rear==-1?1:0;
-}
-
-int isfull(struct que q)
-{
-    return (q.rear+1)%MAX==q.front?1:0;
-}
-
-void addf(struct que *q,int data)
-{
-    if(isempty(*q))
-    {
-        q->front=q->rear=0;
-        q->arr[q->front]=data;
-    }
-    else
-    {
-        q->front=(q->front-1+MAX)%MAX;
-        q->arr[q->front]=data;
+    if (!isfull()) {
+        stk[++top] = x;
     }
 }
 
-void addr(struct que *q,int data)
+char stackexp::pop()
 {
-    if(isempty(*q))
-    {
-        q->front=q->rear=0;
-        q->arr[q->rear]=data;
+    if (!isempty()) {
+        return stk[top--];
     }
-    else
-    {
-        q->rear=(q->rear+1)%MAX;
-        q->arr[q->rear]=data;
-    }
+    return '\0'; // Return null character if stack is empty
 }
 
-int delf(struct que *q)
+bool stackexp::isfull()
 {
-    int data1;
-    data1=q->arr[q->front];
-    if(q->front==q->rear)
-        init(q);
-    else
-        q->front=(q->front+1)%MAX;
-    return data1;
+    return top == size - 1;
 }
 
-int delr(struct que *q)
+bool stackexp::isempty()
 {
-    int data1;
-    data1=q->arr[q->rear];
-    if(q->front==q->rear)
-        init(q);
-    else
-        q->rear=(q->rear-1+MAX)%MAX;
-    return data1;
+    return top == -1;
+}
+
+char stackexp::peek() {
+    if (!isempty()) {
+        return stk[top];
+    }
+    return '\0'; // Return null character if stack is empty
+}
+
+bool isMatchingPair(char open, char close) {
+    if (open == '(' && close == ')') return true;
+    if (open == '[' && close == ']') return true;
+    if (open == '{' && close == '}') return true;
+    return false;
 }
 
 int main()
 {
-    struct que q;
-    int data,ch;
-    init(&q);
-    while(ch!=6)
-    {
-        cout<<"\t\n1.Insert front"
-                "\t\n2.Insert rear"
-                "\t\n3.Delete front"
-                "\t\n4.Delete rear"
-                "\t\n5.Print"
-                "\t\n6.Exit";
-         cout<<"\nEnter your choice : ";
-        cin>>ch;
-        switch(ch)
+    char choice;
+    
+    do {
+        stackexp s1;
+        char exp[50], ch;
+        int i = 0;
+
+        cout << "\n\t!! Parenthesis Checker..!!!!" << endl;
+        cout << "\nEnter the expression to check whether it is in well form or not: ";
+        cin >> exp;
+
+        while (exp[i] != '\0')
         {
-           case 1:
-              cout<<"\nEnter data to insert front : ";
-              cin>>data;
-              addf(&q,data);
-              break;
-
-           case 2:
-               cout<<"\nEnter the data to insert rear : ";
-               cin>>data;
-               addr(&q,data);
-               break;
-
-           case 3:
-               if(isempty(q))
-                   cout<<"\nDequeue is empty!!!";
-               else
-               {
-                   data=delf(&q);
-                   cout<<"\nDeleted data is : "<<data;
-               }
-               break;
-
-           case 4:
-               if(isempty(q))
-                   cout<<"\nDequeue is empty!!!";
-               else
-               {
-                   data=delr(&q);
-                   cout<<"\nDeleted data is : "<<data;
-               }
-               break;
-
-           case 5:
-                if(isempty(q))
-                    cout<<"\nDequeue is empty!!!";
-                else
-                {
-                    cout<<"\nDequeue elements are : ";
-                    print(q);
+            ch = exp[i];
+            if (ch == '(' || ch == '[' || ch == '{') {
+                s1.push(ch);
+            }
+            else if (ch == ')' || ch == ']' || ch == '}') {
+                if (s1.isempty() || !isMatchingPair(s1.pop(), ch)) {
+                    cout << "\nSorry !!! Invalid Expression or not well parenthesized....\n";
+                    break;
                 }
-                break;
+            }
+            i++;
         }
-    }
+
+        if (exp[i] == '\0') {
+            if (s1.isempty()) {
+                cout << "\nExpression is well parenthesized...\n";
+            } else {
+                cout << "\nSorry !!! Invalid Expression or not well parenthesized....\n";
+            }
+        }
+
+        cout << "\nDo you want to check another expression? (y/n): ";
+        cin >> choice;
+
+    } while (choice == 'y' || choice == 'Y');
+
+    cout << "\nExiting the program. Goodbye!\n";
     return 0;
 }
