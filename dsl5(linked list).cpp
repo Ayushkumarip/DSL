@@ -1,486 +1,210 @@
-/*
- 
-
-Department of Computer Engineering has student's club named
-'Pinnacle Club'. Students of Second, third and final year of
-department can be granted membership on request. Similarly one
-may cancel the membership of club. First node is reserved for
-president of club and last node is reserved for secretary of
-club. Write C++ program to maintain club member‘s information
-using singly linked list. Store student PRN and Name. Write
-functions to
-a) Add and delete the members as well as president or even
-secretary.
-b) Compute total number of members of club
-c) Display members
-d) Display list in reverse order using recursion
-e) Two linked lists exists for two divisions. Concatenate two
-lists
-*/
-
-# include<stdio.h>
-# include <iostream>
-# include<string>
+#include <iostream>
+#include <map>
 using namespace std;
-class list;
-class node
-{
-int prn;
-string name;
-node *next;
+
+class Node {
+    string name;
+    int PRN;
+    Node* next;
+
 public:
-node(int
-x, string
-nm)
-{
-prn = x;
-next = NULL;
-name = nm;
-}
-friend
+    Node(string name, int prn) {
+        this->name = name;
+        this->PRN = prn;
+        this->next = nullptr;
+    }
 
-class list;
+    int getPRN() {
+        return PRN;
+    }
+
+    void setPRN(int prn) {
+        PRN = prn;
+    }
+
+    string getName() {
+        return name;
+    }
+
+    void setName(string name) {
+        this->name = name;
+    }
+
+    Node* getNext() {
+        return next;
+    }
+
+    void setNext(Node* nextNode) {
+        next = nextNode;
+    }
 };
-class list
-{
-node * start;
+
+class Club {
+private:
+    Node* head;
+    Node* tail;
+    int count;
+
 public:
-list()
-{
-start = NULL;
-}
-void
-create();
-void
-display();
-void
-insertAtBeginning();
-void
-insertAtEnd();
-void
-insertAfter();
-void
-deleteAtFirst();
-void
-deleteByValue();
-void
-deleteAtEnd();
-int
-computeTotal();
-void
-sortList();
-void
-concatList(list & q1);
-void
-displayRev(node * t);
-bool
-reverseDisplay() // function is only
-for passing start as argument to recursive function
-{
-if (start == NULL)
-return false;
-node * temp = start;
-displayRev(temp);
-// cout << "(President)";
-return true;
-}
+    Club() {
+        head = nullptr;
+        tail = nullptr;
+        count = 0;
+    }
+
+    void addMember(string name, int prn) {
+        Node* newNode = new Node(name, prn);
+        if (head == nullptr) {
+            head = newNode;
+            tail = newNode;
+        } else {
+            tail->setNext(newNode);
+            tail = newNode;
+        }
+        count++;
+    }
+
+    void addPresident(string name, int prn) {
+        Node* newNode = new Node(name, prn);
+        if (head == nullptr) {
+            head = newNode;
+            tail = newNode;
+        } else {
+            newNode->setNext(head);
+            head = newNode;
+        }
+        count++;
+    }
+
+    void addSecretary(string name, int prn) {
+        Node* newNode = new Node(name, prn);
+        if (head == nullptr) {
+            head = newNode;
+            tail = newNode;
+        } else {
+            tail->setNext(newNode);
+            tail = newNode;
+        }
+        count++;
+    }
+
+    void displayMembers() {
+        Node* current = head;
+        if (current == nullptr) {
+            cout << "No members in the club.\n";
+            return;
+        }
+        while (current) {
+            cout << "Name: " << current->getName() << ", PRN: " << current->getPRN() << '\n';
+            current = current->getNext();
+        }
+    }
+
+    int getTotalMember() {
+        return count;
+    }
 };
-void
 
-list::displayRev(node * t)
-{
-if (t == NULL)
-return;
-else
-{
-displayRev(t->next);
-cout << "\nPRN NO:" << t->prn << " Name: " << t->name;
-}
-}
-void
-list::create()
-{
-int
-no;
-string
-nam;
-if (start == NULL)
-{
-cout << "Enter PRN number: ";
-cin >> no;
-cout << "Enter name: ";
-cin >> nam;
-cout << nam;
-start = new
-node(no, nam);
-cout << "\n=============== List Created ===============";
-}
-else
-{
-cout << "\nList is already created.";
-}
-}
-void
-list::display()
-{
-node * t;
-t = start;
-if (start == NULL)
-cout << "\nList is Empty";
-else
-{cout << "\n=============== List: ===============\n";
-while (t != NULL){
-cout << t->prn << " " << t->name << " \n";
-t=t->next;
-}
-// cout << t->prn << " " << t->name << " \n";
-}
-}
-void
-
-list::insertAtBeginning()
-{
-int
-no;
-string
-nam;
-node * temp;
-if (start == NULL)
-{
-create();
-}
-else
-{
-cout << "\nEnter PRN Number : ";
-cin >> no;
-cout << "Enter Name : ";
-cin >> nam;
-// cout << nam;
-temp = new
-node(no, nam);
-temp->next = start;
-start = temp;;
-cout << "Inserted " << temp->name << " at the
-beginning.";
-}
-}
-void
-list::insertAtEnd()
-{
-int
-no;
-string
-nam;
-node * t;
-if (start == NULL)
-create();
-else
-{
-cout << "\nEnter PRN Number : ";
-cin >> no;
-cout << "Enter Name : ";
-cin >> nam;
-t = start;
-while (t->next != NULL)
-t = t->next;
-node * p = new
-node(no, nam);
-t->next = p;
-}
+void displayMenu() {
+    cout << "\nMenu:\n";
+    cout << "1. Create New Division\n";
+    cout << "2. Add Member\n";
+    cout << "3. Add President\n";
+    cout << "4. Add Secretary\n";
+    cout << "5. Display Members\n";
+    cout << "6. Exit\n";
+    cout << "Choose an option: ";
 }
 
-void
-list::insertAfter()
-{
-int
-prev_no;
-cout << "\nEnter PRN No. after do you want insert : ";
-cin >> prev_no;
-node * t;
-t = start;
-string
-nam;
-int
-flag = 0, no;
-while (t != NULL)
-{
-if (t->prn == prev_no)
-{
-flag = 1;
-break;
-}
-t = t->next;
-}
-if (flag == 1)
-{
-node * p;
-cout << "\nEnter PRN Number : ";
-cin >> no;
-cout << "Enter Name : ";
-cin >> nam;
-p=new node(no, nam);
-p->next=t->next;
-t->next=p;
-}
-else
-{
-cout << "\n" << prev_no << " is not in list.";
-}
-}
-void list::
-deleteAtFirst()
-{
-node * t;
-if (start == NULL)
-cout << "\nClub is Empty..";
-else
-{
-t=start;
-start=start->next;
-t->next=NULL; // Not necessary
+int main() {
+    map<int, Club> divisions;
+    int choice, divisionID;
+    string name;
+    int prn;
 
-delete t;
-cout << "\nPresident deleted..";
+    do {
+        displayMenu();
+        cin >> choice;
+
+        switch (choice) {
+            case 1: {
+                cout << "Enter new Division ID: ";
+                cin >> divisionID;
+                if (divisions.find(divisionID) == divisions.end()) {
+                    divisions[divisionID] = Club();
+                    cout << "New division " << divisionID << " created.\n";
+                } else {
+                    cout << "Division ID already exists.\n";
+                }
+                break;
+            }
+
+            case 2: {
+                cout << "Enter division ID: ";
+                cin >> divisionID;
+                if (divisions.find(divisionID) != divisions.end()) {
+                    cout << "Enter name: ";
+                    cin >> name;
+                    cout << "Enter PRN: ";
+                    cin >> prn;
+                    divisions[divisionID].addMember(name, prn);
+                } else {
+                    cout << "Division ID does not exist.\n";
+                }
+                break;
+            }
+
+            case 3: {
+                cout << "Enter division ID: ";
+                cin >> divisionID;
+                if (divisions.find(divisionID) != divisions.end()) {
+                    cout << "Enter new president's name: ";
+                    cin >> name;
+                    cout << "Enter new president's PRN: ";
+                    cin >> prn;
+                    divisions[divisionID].addPresident(name, prn);
+                } else {
+                    cout << "Division ID does not exist.\n";
+                }
+                break;
+            }
+
+            case 4: {
+                cout << "Enter division ID: ";
+                cin >> divisionID;
+                if (divisions.find(divisionID) != divisions.end()) {
+                    cout << "Enter new secretary's name: ";
+                    cin >> name;
+                    cout << "Enter new secretary's PRN: ";
+                    cin >> prn;
+                    divisions[divisionID].addSecretary(name, prn);
+                } else {
+                    cout << "Division ID does not exist.\n";
+                }
+                break;
+            }
+
+            case 5: {
+                cout << "Enter division ID: ";
+                cin >> divisionID;
+                if (divisions.find(divisionID) != divisions.end()) {
+                    cout << "Division " << divisionID << " members:\n";
+                    divisions[divisionID].displayMembers();
+                    cout << "Total club members of Division " << divisionID << ": " << divisions[divisionID].getTotalMember() << endl;
+                } else {
+                    cout << "Division ID does not exist.\n";
+                }
+                break;
+            }
+
+            case 6:
+                cout << "Exiting...\n";
+                break;
+
+            default:
+                cout << "Invalid choice! Please try again.\n";
+        }
+    } while (choice != 6);
+
+    return 0;
 }
-}
-void list::
-deleteByValue()
-{
-int
-no, flag = 0;
-node * t, *prev;
-if (start == NULL)
-cout << "\nList/Club is empty";
-else
-{
-cout << "\nEnter PRN No. of member to be deleted : ";
-cin >> no;
-t=start->next; // t=start if we have to delete president also..start->next is first member
-while (t->next != NULL)
-{
-if (t->prn == no)
-{
-flag = 1;
-break;
-}
-prev = t;
-t = t->next;
-}
-if (flag == 1)
-{
-prev->next=t->next;
-t->next=NULL;
-delete t;
-cout << "\nMember with PRN No: " << no << " is deleted.";
-}
-else
-cout << "\nMember not found in List./President or Secretary cannot be deleted.";
-}
-}
-void list::
-deleteAtEnd()
-{
-node * t, *prev;
-t = start;
-if (start == NULL)
-cout << "\nClub is Empty..";
-else
-{
-
-while (t->next != NULL)
-{
-prev = t;
-t = t->next;
-}
-prev->next = NULL;
-delete
-t;
-cout << "\nSecretary Deleted.";
-}
-}
-int
-list::computeTotal()
-{
-node * t;
-int
-count = 0;
-t = start;
-if (start == NULL)
-{
-cout << "\nList is empty.";
-return 0;
-}
-while (t != NULL)
-{
-count + +;
-t = t->next;
-}
-return count;
-}
-void
-list::sortList()
-{
-node * i, *j, *last = NULL;
-int
-tprn;
-string
-tname;
-if (start == NULL)
-{
-cout << "\nList is empty.";
-return;
-}
-for (i=start;i->next != NULL;i=i->next)
-{
-for (j=start;j->next != last;j=j->next)
-{
-
-if ((j->prn) > (j->next->prn))
-
-{
-tprn = j->prn;
-tname = j->name;
-j->prn = j->next->prn;
-j->name = j->next->name;
-j->next->prn = tprn;
-j->next->name = tname;
-}
-}
-}
-cout << "\n List is sorted.";
-
-display();
-
-}
-void
-list::concatList(list & q1)
-{
-
-node * t, *p;
-t = q1.start;
-if (t == NULL)
-{
-
-cout << "\nList 2 is empty";
-
-return;
-}
-p = start; // first
-list
-while (p->next != NULL)
-{
-p = p->next;
-}
-
-p->next = t;
-q1.start = NULL; // second
-list is set
-to
-null
-cout << "\nAfter concatenation list : \n";
-
-display();
-}
-int
-main()
-{
-list * l;
-int
-choice, selectList;
-list
-l1, l2;
-l = & l1;
-X: cout << "\nSelect List\n1.List 1\n2.List 2\nEnter choice : ";
-
-cin >> selectList;
-if (selectList == 1)
-{
-l = & l1;
-}
-else if (selectList == 2)
-{
-l = & l2;
-}
-else
-{
-
-cout << "\nWrong list Number.";
-goto
-X;
-}
-do
-{
-
-cout << "\n1. Create\n2. Insert President\n3. Insert secretary\n4. Insert after position(member)\n";
-cout<<"5. Display list\n6. Delete President\n7.Delete Secretary\n8. Delete Member\n9. Find total No. of members\n10. Sort list\n11. Reselect List";
-cout<< "\n12. Combine lists\n13.Reverse Display\n0. Exit\nEnter your choice :\t";
-cin >> choice;
-switch(choice)
-
-{
-
-case
-1: l->create();
-break;
-case
-2: l->insertAtBeginning();
-
-break;
-case
-3: l->insertAtEnd();
-
-break;
-case
-
-4: l->insertAfter();
-break;
-case
-5: l->display();
-
-break;
-case
-6: l->deleteAtFirst();
-
-break;
-case
-
-7: l->deleteAtEnd();
-
-break;
-
-case
-
-8: l->deleteByValue();
-
-break;
-case
-9: cout << "\nTotal members(including President & Secretary) : " << l->computeTotal();
-break;
-case
-10: l->sortList();
-
-break;
-case
-11:
-goto
-X;
-break;
-case
-12:
-l1.concatList(l2);
-
-break;
-case
-13:
-l->reverseDisplay();
-break;
-deafult:
-cout << "Wrong choice";
-}
-
-}while (choice != 0);
-cout << "\n=============== GOOD BYE ===============\n";
-return 0;
-
-}
-
